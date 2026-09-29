@@ -1,1 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="MD Rayhan">
+  <meta name="description" content="MD Rayhan — Embedded AI, Robotics and Embodied AI. Exploring robot perception, human-robot collaboration, safe robotics and physical AI.">
+  <title>MD Rayhan — Embedded AI × Robotics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+  <style>
+    :root {
+      --bg:#06070a; --bg-2:#0a0d12; --surface:#0d1118; --surface-2:#111722;
+      --text:#f4f6f8; --muted:#8c97a8; --muted-2:#626d7c;
+      --accent:#8b5cf6; --accent-light:#b49aff; --cyan:#67e8f9; --green:#6ee7b7;
+      --border:rgba(255,255,255,.085); --border-strong:rgba(255,255,255,.14);
+      --glow:rgba(139,92,246,.20); --nav:rgba(6,7,10,.72);
+      --radius:20px; --max:1180px;
+    }
+    body.light {
+      --bg:#f5f6f9; --bg-2:#eef0f5; --surface:#fff; --surface-2:#f3f4f8;
+      --text:#111318; --muted:#5f6877; --muted-2:#7d8795;
+      --accent:#7042e8; --accent-light:#7042e8; --cyan:#0891b2; --green:#059669;
+      --border:rgba(0,0,0,.08); --border-strong:rgba(0,0,0,.14);
+      --glow:rgba(112,66,232,.13); --nav:rgba(245,246,249,.78);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:90px}
+    body{background:var(--bg);color:var(--text);font-family:"Inter",sans-serif;line-height:1.65;overflow-x:hidden;transition:background .3s,color .3s}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:55px 55px;mask-image:linear-gradient(to bottom,black,transparent 85%)}
+    body.light::before{background-image:linear-gradient(rgba(0,0,0,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.025) 1px,transparent 1px)}
+    a{color:inherit;text-decoration:none} button{font-family:inherit}.container{width:min(var(--max),90%);margin:auto}
+
+    nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:var(--nav);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+    .nav-inner{height:72px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:-.04em}
+    .brand-mark{width:30px;height:30px;border:1px solid var(--accent);border-radius:8px;display:grid;place-items:center;color:var(--accent-light);font-size:.72rem;box-shadow:0 0 20px var(--glow)}
+    .nav-links{display:flex;align-items:center;gap:1.5rem;list-style:none}
+    .nav-links a{color:var(--muted);font-size:.82rem;transition:color .2s}
+    .nav-links a:hover{color:var(--text)}
+    .theme-toggle{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:.25s}
+    .theme-toggle:hover{border-color:var(--accent);transform:rotate(15deg)}
+
+    .hero{min-height:100vh;padding-top:72px;display:flex;align-items:center;position:relative}
+    .hero::after{content:"";position:absolute;width:600px;height:600px;left:-300px;top:25%;border-radius:50%;background:var(--glow);filter:blur(120px);pointer-events:none}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:5rem;align-items:center}
+    .eyebrow{display:flex;align-items:center;gap:9px;color:var(--accent-light);font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:1.5rem}
+    .status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(110,231,183,.08),0 0 14px rgba(110,231,183,.5);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+    h1{font-family:"Space Grotesk",sans-serif;font-size:clamp(4rem,8vw,7.8rem);line-height:.84;letter-spacing:-.075em;margin-bottom:2rem}
+    .gradient{background:linear-gradient(110deg,var(--text) 15%,var(--accent-light) 70%,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero-title{max-width:720px;font-size:clamp(1.35rem,2.5vw,2rem);line-height:1.3;color:var(--muted);margin-bottom:1.2rem}
+    .hero-title strong{color:var(--text);font-weight:600}
+    .hero-description{max-width:650px;color:var(--muted);font-size:.98rem;margin-bottom:2rem}
+    .hero-buttons{display:flex;flex-wrap:wrap;gap:.7rem}
+    .btn{display:inline-flex;align-items:center;gap:9px;padding:.75rem 1rem;border-radius:10px;border:1px solid var(--border);font-size:.82rem;font-weight:700;transition:.25s}
+    .btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+    .btn-primary:hover{transform:translateY(-3px);box-shadow:0 15px 35px var(--glow)}
+    .btn-secondary{background:var(--surface);color:var(--text)}
+    .btn-secondary:hover{border-color:var(--accent);transform:translateY(-3px)}
+
+    .system-panel{position:relative;min-height:470px;border:1px solid var(--border);border-radius:28px;background:radial-gradient(circle at 50% 45%,rgba(139,92,246,.13),transparent 45%),var(--surface);box-shadow:0 35px 100px rgba(0,0,0,.25);overflow:hidden}
+    .system-header{height:48px;padding:0 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);color:var(--muted);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase}
+    .system-status{display:flex;align-items:center;gap:7px;color:var(--green)}
+    .system-body{position:relative;height:420px;display:flex;align-items:center;justify-content:center}
+    .radar{position:absolute;width:310px;height:310px;border-radius:50%;border:1px solid rgba(139,92,246,.18);background:repeating-radial-gradient(circle,transparent 0,transparent 45px,rgba(139,92,246,.07) 46px,transparent 47px)}
+    .radar::before{content:"";position:absolute;width:1px;height:100%;left:50%;background:rgba(139,92,246,.12)}
+    .radar::after{content:"";position:absolute;height:1px;width:100%;top:50%;background:rgba(139,92,246,.12)}
+    .radar-sweep{position:absolute;width:145px;height:145px;border-radius:100% 0 0 0;border-top:1px solid var(--accent);transform-origin:bottom right;animation:radar 4s linear infinite;opacity:.8}
+    @keyframes radar{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+    .robot-node{position:relative;width:120px;height:120px;display:grid;place-items:center;border-radius:25px;border:1px solid var(--accent);background:linear-gradient(145deg,rgba(139,92,246,.15),rgba(103,232,249,.04));box-shadow:0 0 60px rgba(139,92,246,.18),inset 0 0 30px rgba(139,92,246,.06);z-index:5;animation:levitate 4s ease-in-out infinite}
+    .robot-node i{font-size:2.8rem;color:var(--accent-light)}
+    @keyframes levitate{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+    .data-point{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 15px var(--cyan);z-index:6}
+    .point-1{top:23%;left:26%}.point-2{top:28%;right:25%}.point-3{bottom:25%;left:30%}.point-4{bottom:30%;right:22%}
+    .system-label{position:absolute;padding:.4rem .6rem;border:1px solid var(--border);background:rgba(6,7,10,.7);border-radius:7px;color:var(--muted);font-family:monospace;font-size:.58rem;z-index:7}
+    .label-1{top:20%;left:8%}.label-2{top:24%;right:7%}.label-3{bottom:22%;left:9%}.label-4{bottom:26%;right:8%}
+    .system-footer{position:absolute;left:1rem;right:1rem;bottom:1rem;display:flex;justify-content:space-between;font-family:monospace;font-size:.58rem;color:var(--muted-2)}
+
+    section{padding:115px 0}
+    .section-kicker{color:var(--accent-light);font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.18em;margin-bottom:.7rem}
+    .section-title{font-family:"Space Grotesk",sans-serif;font-size:clamp(2.2rem,4.5vw,4rem);line-height:1;letter-spacing:-.06em;margin-bottom:1rem}
+    .section-intro{max-width:700px;color:var(--muted);margin-bottom:3rem}
+
+    .focus-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+    .focus-card{min-height:210px;padding:1.7rem;background:var(--surface);transition:.25s}
+    .focus-card:hover{background:var(--surface-2)}
+    .focus-number{color:var(--muted-2);font-family:monospace;font-size:.65rem;margin-bottom:2.3rem}
+    .focus-icon{color:var(--accent-light);font-size:1.1rem;margin-bottom:.9rem}
+    .focus-card h3{font-size:1rem;margin-bottom:.45rem}.focus-card p{color:var(--muted);font-size:.8rem}
+
+    .about-grid{display:grid;grid-template-columns:.7fr 1.3fr;gap:6rem}
+    .big-statement{font-family:"Space Grotesk",sans-serif;font-size:clamp(1.7rem,3vw,2.6rem);line-height:1.15;letter-spacing:-.045em}
+    .about-copy{color:var(--muted);max-width:760px}.about-copy p+p{margin-top:1.1rem}
+    .location-line{display:flex;align-items:center;gap:8px;margin-top:1.5rem;color:var(--muted-2);font-size:.75rem}
+
+    .work-frame{border:1px solid var(--border);border-radius:24px;background:var(--surface);overflow:hidden}
+    .work-top{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;border-bottom:1px solid var(--border);color:var(--muted-2);font-family:monospace;font-size:.63rem}
+    .work-main{display:grid;grid-template-columns:1fr .8fr;gap:3rem;padding:2.3rem}
+    .work-main h3{font-family:"Space Grotesk",sans-serif;font-size:1.7rem;letter-spacing:-.035em;margin-bottom:.8rem}
+    .work-main p{color:var(--muted);font-size:.9rem}
+    .work-tags{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:1.4rem}
+    .tag{padding:.35rem .55rem;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:monospace;font-size:.65rem}
+    .work-side{border-left:1px solid var(--border);padding-left:2rem;display:flex;flex-direction:column;justify-content:center;gap:.9rem}
+    .work-side-row{display:flex;align-items:center;justify-content:space-between;font-size:.72rem}
+    .work-side-row span:first-child{color:var(--muted)}.work-side-row span:last-child{color:var(--accent-light);font-family:monospace}
+
+    .research-card{position:relative;border:1px solid var(--border);border-radius:22px;background:var(--surface);padding:2.3rem;overflow:hidden}
+    .research-card::before{content:"RESEARCH / 01";position:absolute;top:1.3rem;right:1.5rem;color:var(--muted-2);font-family:monospace;font-size:.6rem}
+    .research-meta{color:var(--accent-light);font-family:monospace;font-size:.67rem;margin-bottom:1rem}
+    .research-title{max-width:850px;font-family:"Space Grotesk",sans-serif;font-size:clamp(1.35rem,2.5vw,2rem);line-height:1.25;letter-spacing:-.035em;margin-bottom:1rem}
+    .authors{color:var(--muted);font-size:.8rem;margin-bottom:1.2rem}
+    .research-summary{max-width:850px;color:var(--muted);font-size:.9rem}
+    .contribution{max-width:850px;margin-top:1.4rem;padding:1rem 1.1rem;border-left:2px solid var(--accent);background:var(--surface-2);color:var(--muted);font-size:.8rem}
+    .contribution strong{color:var(--text)}.doi{display:inline-flex;align-items:center;gap:8px;margin-top:1.5rem;color:var(--accent-light);font-size:.8rem;font-weight:700}
+
+    .award-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+    .award{padding:1.7rem;border:1px solid var(--border);border-radius:18px;background:var(--surface)}
+    .award-year{color:var(--accent-light);font-family:monospace;font-size:.65rem;margin-bottom:1.8rem}
+    .award h3{font-family:"Space Grotesk",sans-serif;font-size:1.15rem;margin-bottom:.4rem}.award p{color:var(--muted);font-size:.8rem}
+
+    .robotics-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:22px;overflow:hidden}
+    .robotics-panel{padding:2.2rem;background:var(--surface)}
+    .robotics-panel h3{font-family:"Space Grotesk",sans-serif;font-size:1.5rem;margin-bottom:.7rem}.robotics-panel p{color:var(--muted);font-size:.85rem}
+    .robot-spec{margin-top:1.5rem;display:flex;flex-direction:column;gap:.6rem}
+    .spec-row{display:flex;justify-content:space-between;padding-bottom:.5rem;border-bottom:1px dashed var(--border);font-family:monospace;font-size:.67rem}
+    .spec-row span:first-child{color:var(--muted)}.spec-row span:last-child{color:var(--accent-light)}
+
+    .aegis-box{position:relative;padding:3.5rem;border:1px solid rgba(139,92,246,.3);border-radius:26px;background:radial-gradient(circle at 85% 20%,rgba(139,92,246,.15),transparent 30%),var(--surface);overflow:hidden}
+    .aegis-code{position:absolute;top:1.5rem;right:1.5rem;color:var(--muted-2);font-family:monospace;font-size:.6rem}
+    .aegis-label{color:var(--accent-light);font-family:monospace;font-size:.65rem;letter-spacing:.16em;margin-bottom:1rem}
+    .aegis-title{max-width:850px;font-family:"Space Grotesk",sans-serif;font-size:clamp(2rem,4.5vw,4rem);line-height:1;letter-spacing:-.06em;margin-bottom:1.2rem}
+    .aegis-copy{max-width:800px;color:var(--muted);font-size:.9rem}
+    .pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;margin-top:2rem}
+    .pipeline-node{padding:.55rem .7rem;border:1px solid var(--border);border-radius:7px;background:var(--bg-2);font-family:monospace;font-size:.65rem;color:var(--muted)}
+    .pipeline-arrow{color:var(--accent-light);font-size:.65rem}
+
+    .skills{display:flex;flex-wrap:wrap;gap:.5rem}
+    .skill{padding:.5rem .7rem;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--muted);font-family:monospace;font-size:.67rem;transition:.2s}
+    .skill:hover{color:var(--text);border-color:var(--accent);transform:translateY(-2px)}
+
+    .contact{text-align:center;padding-bottom:90px}
+    .contact-title{font-family:"Space Grotesk",sans-serif;font-size:clamp(3rem,7vw,6rem);line-height:.9;letter-spacing:-.07em;margin-bottom:1rem}
+    .contact-copy{color:var(--muted);max-width:500px;margin:auto auto 2rem}
+    .socials{display:flex;justify-content:center;flex-wrap:wrap;gap:.65rem}
+    .social{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--muted);transition:.25s}
+    .social:hover{color:var(--text);border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 30px var(--glow)}
+    footer{border-top:1px solid var(--border);padding:1.4rem 0;color:var(--muted-2);font-family:monospace;font-size:.62rem;text-align:center}
+    .reveal{opacity:0;transform:translateY(25px);transition:opacity .7s,transform .7s}.reveal.visible{opacity:1;transform:translateY(0)}
+
+    @media(max-width:950px){
+      .hero-grid{grid-template-columns:1fr;gap:3rem}.system-panel{min-height:400px}.system-body{height:350px}
+      .focus-grid{grid-template-columns:repeat(2,1fr)}.about-grid{grid-template-columns:1fr;gap:2rem}
+      .work-main{grid-template-columns:1fr}.work-side{border-left:0;border-top:1px solid var(--border);padding-left:0;padding-top:1.5rem}
+      .robotics-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:650px){
+      .nav-links{display:none}section{padding:80px 0}.hero{padding-top:130px}h1{font-size:clamp(4rem,19vw,6rem)}
+      .focus-grid,.award-grid{grid-template-columns:1fr}.system-panel{min-height:340px;border-radius:20px}.system-body{height:290px}
+      .radar{width:220px;height:220px}.robot-node{width:90px;height:90px}.robot-node i{font-size:2rem}.system-label{display:none}
+      .aegis-box{padding:2rem 1.4rem}.pipeline-arrow{display:none}.pipeline{gap:.4rem}
+      .research-card,.work-main,.robotics-panel{padding:1.5rem}.contact-title{font-size:3.4rem}
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a href="#top" class="brand"><span class="brand-mark">MR</span><span>MD RAYHAN</span></a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li><li><a href="#work">Work</a></li><li><a href="#research">Research</a></li>
+        <li><a href="#awards">Awards</a></li><li><a href="#aegis">Aegis</a></li><li><a href="#contact">Contact</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fa-solid fa-sun"></i></button>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <div class="eyebrow"><span class="status-dot"></span>Embedded AI × Robotics</div>
+          <h1>MD<br><span class="gradient">Rayhan</span></h1>
+          <div class="hero-title">Building toward <strong>safer physical AI</strong> for real-world robots.</div>
+          <p class="hero-description">Junior undergraduate at Guizhou University exploring embodied AI, robot perception and human-robot collaboration, with a particular interest in safe interaction between intelligent machines and the physical world.</p>
+          <div class="hero-buttons">
+            <a href="#research" class="btn btn-primary"><i class="fa-solid fa-flask"></i>Research</a>
+            <a href="https://github.com/ray186b" target="_blank" rel="noopener" class="btn btn-secondary"><i class="fa-brands fa-github"></i>GitHub</a>
+          </div>
+        </div>
+
+        <div class="system-panel reveal">
+          <div class="system-header"><span>PHYSICAL AI / SYSTEM VIEW</span><span class="system-status"><span class="status-dot"></span>EXPLORING</span></div>
+          <div class="system-body">
+            <div class="radar"></div><div class="radar-sweep"></div>
+            <span class="data-point point-1"></span><span class="data-point point-2"></span><span class="data-point point-3"></span><span class="data-point point-4"></span>
+            <div class="system-label label-1">PERCEPTION</div><div class="system-label label-2">HRC</div><div class="system-label label-3">SAFETY</div><div class="system-label label-4">EMBODIED AI</div>
+            <div class="robot-node"><i class="fa-solid fa-robot"></i></div>
+          </div>
+          <div class="system-footer"><span>SENSOR → INTELLIGENCE → ACTION</span><span>AEGIS / 01</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="focus">
+      <div class="container">
+        <div class="section-kicker reveal">01 / CURRENT FOCUS</div>
+        <h2 class="section-title reveal">Where perception<br>meets the physical world.</h2>
+        <p class="section-intro reveal">My current direction sits at the intersection of embodied intelligence, robot perception and safe human-machine interaction.</p>
+        <div class="focus-grid">
+          <div class="focus-card reveal"><div class="focus-number">01</div><div class="focus-icon"><i class="fa-solid fa-eye"></i></div><h3>Robot Perception</h3><p>Giving robots useful information about the environments they operate in.</p></div>
+          <div class="focus-card reveal"><div class="focus-number">02</div><div class="focus-icon"><i class="fa-solid fa-people-arrows"></i></div><h3>Human-Robot Collaboration</h3><p>Exploring robotic systems designed to operate around and with people.</p></div>
+          <div class="focus-card reveal"><div class="focus-number">03</div><div class="focus-icon"><i class="fa-solid fa-shield-halved"></i></div><h3>Safe Robotics</h3><p>Thinking about uncertainty, failure, robustness and physical consequences.</p></div>
+          <div class="focus-card reveal"><div class="focus-number">04</div><div class="focus-icon"><i class="fa-solid fa-brain"></i></div><h3>Embodied AI</h3><p>Connecting learning and intelligence to machines that can perceive and act.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container about-grid">
+        <div class="reveal"><div class="section-kicker">02 / ABOUT</div><div class="big-statement">Interested in AI that <span class="gradient">has to work in reality.</span></div></div>
+        <div class="about-copy reveal">
+          <p>I'm MD Rayhan, a junior undergraduate at Guizhou University in China, originally from Bangladesh.</p>
+          <p>My interests lie at the intersection of embedded AI, robotics and physical intelligence. I am particularly interested in robot perception, embodied AI and human-robot collaboration.</p>
+          <p>I am especially drawn to applications where a robotic system has to deal with uncertainty and interact with people — including medical and autonomous robotics.</p>
+          <p>My long-term goal is to develop deployment-oriented intelligence for physical systems: not just models that perform well in controlled environments, but robotic systems that can perceive, adapt and act responsibly in the real world.</p>
+          <div class="location-line"><i class="fa-solid fa-location-dot"></i>Guizhou, China · Guizhou University</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="work">
+      <div class="container">
+        <div class="section-kicker reveal">03 / SELECTED WORK</div>
+        <h2 class="section-title reveal">More than isolated demos.</h2>
+        <p class="section-intro reveal">I use projects as experiments for understanding different parts of the physical-AI stack. The portfolio will evolve as stronger robotics work replaces older work.</p>
+        <div class="work-frame reveal">
+          <div class="work-top"><span>/engineering/portfolio</span><span>EVOLVING</span></div>
+          <div class="work-main">
+            <div>
+              <h3>Building across the physical-AI stack.</h3>
+              <p>My previous and ongoing work spans machine learning, statistical calibration, sensor/data processing, computer vision and intelligent systems. Increasingly, my engineering direction is moving toward robotics, embodied intelligence and safe interaction with the physical world.</p>
+              <div class="work-tags"><span class="tag">Computer Vision</span><span class="tag">Machine Learning</span><span class="tag">Sensor Data</span><span class="tag">Statistical Modeling</span><span class="tag">Reinforcement Learning</span><span class="tag">Robotics</span><span class="tag">Safety</span></div>
+            </div>
+            <div class="work-side">
+              <div class="work-side-row"><span>Direction</span><span>EMBODIED AI</span></div><div class="work-side-row"><span>Interface</span><span>PHYSICAL</span></div><div class="work-side-row"><span>Priority</span><span>RELIABILITY</span></div><div class="work-side-row"><span>Archive</span><span>GITHUB</span></div>
+              <a href="https://github.com/ray186b" target="_blank" rel="noopener" class="btn btn-secondary"><i class="fa-brands fa-github"></i>Explore GitHub</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="research">
+      <div class="container">
+        <div class="section-kicker reveal">04 / RESEARCH</div>
+        <h2 class="section-title reveal">From sensing<br>to reliable measurement.</h2>
+        <p class="section-intro reveal">My research experience has introduced me to quantitative sensing, statistical calibration and the practical problem of making measurements more reliable in complex conditions.</p>
+        <article class="research-card reveal">
+          <div class="research-meta">MICROCHEMICAL JOURNAL · VOLUME 230 · 2026</div>
+          <h3 class="research-title">Ultrasensitive “signal-on” photoelectrochemical aptasensor based on self-assembled Cu₃(BTC)₂/TiO₂ interface for trace Pb²⁺ monitoring in real water samples</h3>
+          <p class="authors">Di Yang · Jie Cai · <strong>Md Rayhan</strong> · Qiuping Fu · Lulu Xiong · Danping Chen · Zhenchao Wang · Bingqian Liu</p>
+          <p class="research-summary">The study develops a DNAzyme-driven photoelectrochemical aptasensor for trace Pb²⁺ monitoring and incorporates weighted least squares calibration to address heteroscedasticity and matrix interference in quantitative measurement.</p>
+          <div class="contribution"><strong>My contribution:</strong> methodology and software, including the computational calibration workflow and statistical modeling component.</div>
+          <a class="doi" href="https://doi.org/10.1016/j.microc.2026.119637" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i>DOI / Publication</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="awards">
+      <div class="container">
+        <div class="section-kicker reveal">05 / RECOGNITION</div>
+        <h2 class="section-title reveal">A few milestones.</h2>
+        <p class="section-intro reveal">Recognition from computing competitions and academic work that has contributed to my engineering path.</p>
+        <div class="award-grid">
+          <div class="award reveal"><div class="award-year">2026 / 01</div><h3>Award of Excellence</h3><p>China Collegiate Computing Competition — Provincial Award of Excellence.</p></div>
+          <div class="award reveal"><div class="award-year">2026 / 02</div><h3>Award of Excellence</h3><p>China Collegiate Computing Competition — Provincial Award of Excellence.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="robotics">
+      <div class="container">
+        <div class="section-kicker reveal">06 / ROBOTICS</div>
+        <h2 class="section-title reveal">From code<br>to machines.</h2>
+        <div class="robotics-grid">
+          <div class="robotics-panel reveal">
+            <h3>Robot Innovation Training</h3>
+            <p>Hands-on robotics training at Guizhou University using the Dobot Magician E6 six-axis robotic arm. The work includes coordinate-based motion, suction-based grasping and release, and direct interaction with a physical robotic system.</p>
+            <div class="robot-spec"><div class="spec-row"><span>Platform</span><span>DOBOT E6</span></div><div class="spec-row"><span>Environment</span><span>PHYSICAL ROBOT</span></div><div class="spec-row"><span>Focus</span><span>MANIPULATION</span></div></div>
+          </div>
+          <div class="robotics-panel reveal">
+            <h3>Moving toward embodied systems</h3>
+            <p>Alongside practical robotics training, I am working toward projects involving embodied AI, safe robotics and human-robot interaction. I have also joined the Guizhou University robotics club as I continue developing hands-on experience.</p>
+            <div class="robot-spec"><div class="spec-row"><span>Direction</span><span>EMBODIED AI</span></div><div class="spec-row"><span>Interaction</span><span>HRC</span></div><div class="spec-row"><span>Next layer</span><span>SIM → REAL</span></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="aegis">
+      <div class="container">
+        <div class="aegis-box reveal">
+          <div class="aegis-code">AEGIS / ENGINEERING / ONGOING</div>
+          <div class="aegis-label">PROJECT AEGIS</div>
+          <h2 class="aegis-title">Learning to build robots that know when reality disagrees.</h2>
+          <p class="aegis-copy">Project Aegis is my ongoing engineering project for developing practical skills in embodied AI and robotics. The focus is not simply making a model produce an answer. It is understanding what a robotic system should trust, how it should react to uncertainty, and what happens when reality differs from its assumptions.</p>
+          <br>
+          <p class="aegis-copy">The project is evolving toward a complete physical-AI workflow — from perception and decision-making through control and simulation, eventually reaching real hardware deployment.</p>
+          <div class="pipeline">
+            <span class="pipeline-node">PERCEPTION</span><span class="pipeline-arrow">→</span><span class="pipeline-node">DECISION</span><span class="pipeline-arrow">→</span><span class="pipeline-node">CONTROL</span><span class="pipeline-arrow">→</span><span class="pipeline-node">ROS 2</span><span class="pipeline-arrow">→</span><span class="pipeline-node">SIMULATION</span><span class="pipeline-arrow">→</span><span class="pipeline-node">HARDWARE</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="container">
+        <div class="section-kicker reveal">07 / TECHNICAL DIRECTION</div>
+        <h2 class="section-title reveal">Tools, systems<br>and things I'm learning.</h2>
+        <p class="section-intro reveal">My stack is evolving alongside my robotics work, with increasing emphasis on deployment-oriented intelligence and simulation-to-real systems.</p>
+        <div class="skills reveal">
+          <span class="skill">Python</span><span class="skill">C</span><span class="skill">Git</span><span class="skill">OpenCV</span><span class="skill">Computer Vision</span><span class="skill">Machine Learning</span><span class="skill">Reinforcement Learning</span><span class="skill">Sensor Data Processing</span><span class="skill">Statistical Modeling</span><span class="skill">MATLAB</span><span class="skill">Simulink</span><span class="skill">ROS 2</span><span class="skill">Gazebo</span><span class="skill">Robotics Simulation</span><span class="skill">Embodied AI</span><span class="skill">Robot Perception</span><span class="skill">Human-Robot Collaboration</span><span class="skill">Robot Safety</span><span class="skill">Simulation → Real</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="container">
+        <div class="section-kicker reveal">08 / CONNECT</div>
+        <h2 class="contact-title reveal">Let's build something <span class="gradient">physical.</span></h2>
+        <p class="contact-copy reveal">Research, robotics, collaboration — or simply an interesting conversation about embodied AI.</p>
+        <div class="socials reveal">
+          <a class="social" href="https://github.com/ray186b" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><i class="fa-brands fa-github"></i></a>
+          <a class="social" href="https://www.linkedin.com/in/md-rayhan-8a3463a6/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a class="social" href="https://scholar.google.com/citations?hl=en&user=BxP8X-MAAAAJ" target="_blank" rel="noopener" aria-label="Google Scholar" title="Google Scholar"><i class="fa-solid fa-graduation-cap"></i></a>
+          <a class="social" href="https://www.researchgate.net/profile/Md-Rayhan-55" target="_blank" rel="noopener" aria-label="ResearchGate" title="ResearchGate"><i class="fa-brands fa-researchgate"></i></a>
+          <a class="social" href="https://orcid.org/0009-0003-6326-0459" target="_blank" rel="noopener" aria-label="ORCID" title="ORCID"><i class="fa-brands fa-orcid"></i></a>
+          <a class="social" href="mailto:mdrayhan.186b@qq.com" aria-label="Email" title="Email"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="container">© 2026 MD Rayhan · Embedded AI × Robotics × Physical Intelligence</div></footer>
+
+  <script>
+    const themeToggle=document.getElementById("themeToggle");
+    const themeIcon=themeToggle.querySelector("i");
+    const savedTheme=localStorage.getItem("theme");
+    if(savedTheme==="light"){document.body.classList.add("light");themeIcon.className="fa-solid fa-moon";}
+    themeToggle.addEventListener("click",()=>{
+      document.body.classList.toggle("light");
+      const light=document.body.classList.contains("light");
+      localStorage.setItem("theme",light?"light":"dark");
+      themeIcon.className=light?"fa-solid fa-moon":"fa-solid fa-sun";
+    });
+
+    const observer=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },{threshold:.12});
+    document.querySelectorAll(".reveal").forEach(element=>observer.observe(element));
+  </script>
+</body>
+</html>
